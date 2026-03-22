@@ -1,0 +1,52 @@
+---
+title: "Peer Review for Min Jung"
+output: html_document
+date: "2026-03-22"
+---
+Your code is not runable in your markdown file. You to insert chunks so then you can run the actual code. It should look like what I have done below. Then you can run all chunks. Then anything that doesn't need to be run can be in the white space in between. I have shown an example below for the first two parts of your code. To insert teh chunks you can use the code tab at the very top and insert chunks. 
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(readr)
+```
+
+#====================================
+###dplyr provides functions such as:
+
+  #filter() → choose rows based on conditions
+
+  #select() → choose columns
+
+  #arrange() → sort rows
+
+  #mutate() → create new variables
+
+  #summarize() → calculate summary statistics
+
+# 2. Load data
+```{r}
+genotypes <- read_tsv("https://raw.githubusercontent.com/EEOB-BioData/BCB5460_Spring2026/main/assignments/UNIX_Assignment/fang_et_al_genotypes.txt")
+
+snp_pos <- read_tsv("https://raw.githubusercontent.com/EEOB-BioData/BCB5460_Spring2026/main/assignments/UNIX_Assignment/snp_position.txt")
+```
+
+Because I could not run all the chunks it's hard to know if the entire code works or not. I will note anything that looks like it would not work 
+
+# 5. Prepare SNP position table
+I think you need to reference your data that you are trying to use the select command on. In this case I think it would snp_positions. So you would do snp_positions %>% then the rest of your code 
+
+# 6. Join genotype and position data
+In this code snp_info doesn't exist so you would need to create it in the line above. Also be careful joining how you have it written because geno_df doesn't have a column title of "SNP_ID" (I think it's sample_ID) so I don't think it would join the data correctly. 
+
+# 7. Separate maize and teosinte groups
+Make sure your naming conventions are consitent. In step 6 your data is "combined" but in step 7 your data is "combined_data"
+
+I think you need to join back the combined_data and the maize/teosinte_data because I don't think you can add two different data column that that together. 
+
+# 9. Function to create chromosome files
+It is really hard to tell if this is going to run without errors without actually running the code. It looks like it should work but I don't know for certain. 
+
+# Data visulaization 
+You are missing 2/3 data visualization elements. 
+
