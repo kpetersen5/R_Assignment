@@ -29,7 +29,7 @@ library(tidyverse)
 * Your final files appear to be sorted alphanumerically by position and are not in increasing or decreasing order.
 * Specifically, looking at `CSV_files /maize_chr_10_decrease.csv`, the positions on: 
     - Line 17   (61,763,079)
-    - Line 18   (6,121,326)  
+    - Line 18   (6,121,326)
     - Line 19   (43,936,126) 
 * Line 17 is greater than Line 18, but Line 18 is less than Line 19.
 
