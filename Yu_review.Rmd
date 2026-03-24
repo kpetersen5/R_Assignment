@@ -1,0 +1,73 @@
+---
+title: "Petersen_R_Assignment_review_by_Valerie"
+author: "Valerie Yu"
+date: "`r Sys.Date()`"
+output: 
+  pdf_document: 
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(readr)
+library(tidyverse)
+```
+
+# Review overall comments
+* Your markdown is very cleanly written and easy to understand!
+* All code ran without major error. I did get `Warning: NAs introduced by coercion` once, but the code still ran and produced the graph.
+
+## PART 1 Review
+
+### Data Inspection
+* Very thorough on data inspection with each command purpose explained and answer commented.
+* I liked how you described the variables important for the assignment.
+* No issues, all ran smoothly.
+
+### Data Processing
+* Your final files appear to be sorted alphanumerically by position and are not in increasing or decreasing order.
+* Specifically, looking at `CSV_files /maize_chr_10_decrease.csv`, the positions on: 
+    - Line 17   (61,763,079)
+    - Line 18   (6,121,326)
+    - Line 19   (43,936,126) 
+* Line 17 is greater than Line 18, but Line 18 is less than Line 19.
+
+* I think the error might have been when you transposed the data. You comment that the data is now character and convert to data frame, but that still left `Position` as a character.
+* After your *merge* and before your *function*, I entered:
+```{r, eval=FALSE}
+typeof(Maize_merge_2$Position) # this produced Character
+typeof(Teosinte_merge_2$Position) # this produced Character
+```
+* I think this caused your function to sort incorrectly since `Position` remains a character.
+* After your *merge* and before your *function*, I added:
+```{r, eval=FALSE}
+Maize_merge_2$Position <- as.numeric(Maize_merge_2$Position)
+Teosinte_merge_2$Position <- as.numeric(Teosinte_merge_2$Position)
+typeof(Maize_merge_2$Position) # this produced Double
+typeof(Teosinte_merge_2$Position) # this produced Double
+```
+* Then when I re-ran the rest of your code, the final files no longer sorted alphanumerically.
+
+* You have `cdv_marker_id` at the end of your files and your first coloumn is titled `SAMPLE_ID`. I'd change this to fit the instructions, which say: __All our files will be formatted such that the first column is "SNP_ID", the second column is "Chromosome", the third column is "Position", and subsequent columns are genotype data from either  maize or teosinte individuals.__
+
+* Outside of that, everything else looked good and made sense. 
+* When I ran everything, it generated the csv files in the main folder and not the `CSV_files` folder. Not a huge deal but you could write it directly into `CSV_files` so when it's run it won't duplicate in `R_Assignment_BCB5460` 
+* I should have deleted all edits/test-code I added and any duplicate test-csv files generated.  I only pushed my review .Rmd and .pdf so hopefully none of your original markdown code should be altered.
+
+## PART 2 Review
+
+### SNPs per chromosome
+* I did it slightly different, but I think the distribution across chromosomes resulted in the same pattern!
+* I like your ten plots using facet wrap. The x-axis is a bit hard to read, but that could just be my window size.
+
+### Missing data and amount of heterozygosity and homozygosity
+* No issues, all ran smoothly with graph showing up.
+
+### Your own visualization
+* No issues, all ran smoothly with graph showing up.
+
+
+*End of my review.*
+
+Valerie Yu
