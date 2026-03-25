@@ -8,7 +8,7 @@ date: "2026-03-16"
 
 # Data Inspection 
 To start I imported both the fang_et_al_genotypes and snp_position into R
-```{r}
+```{r, eval=FALSE}
 fang_et_al_genotype_URL <- "https://raw.githubusercontent.com/EEOB-BioData/BCB546_Spring2024/main/assignments/UNIX_Assignment/fang_et_al_genotypes.txt"
 snp_position_URL <-"https://raw.githubusercontent.com/EEOB-BioData/BCB546_Spring2024/main/assignments/UNIX_Assignment/snp_position.txt"
 fang_et_al_genotypes <- read.delim(fang_et_al_genotype_URL, header = TRUE, sep = "\t", quote = "")
@@ -257,8 +257,7 @@ I used ploted both Maize and Teosinte on teh plots again this time overlapped. I
 ggplot(Combined_long, aes(x = Position, fill = Species)) +
   geom_histogram(binwidth = 1000000, position = "identity", alpha = 0.5) +
   facet_wrap(~Chromosome, scales = "free_x") +
-  labs(title = "SNP Distribution per Chromosome", x = "Position (Mbp)", y = "Number of SNPs") + 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8))
+  labs(title = "SNP Distribution per Chromosome", x = "Position (bp)", y = "Number of SNPs")
 ```
 
 ## Data Visualization #2 - Missing data and Amount of Heterozygosity

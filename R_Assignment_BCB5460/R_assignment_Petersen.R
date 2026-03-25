@@ -101,6 +101,16 @@ Maize_merge_2 <- select(Maize_merge, SAMPLE_ID, Chromosome, Position, everything
 Teosinte_merge <- merge(Teosinte_genotype_tran_3, snp_position_2, by.x= "SAMPLE_ID", by.y= "SNP_ID", all.y=TRUE)
 Teosinte_merge_2 <- select(Teosinte_merge, SAMPLE_ID, Chromosome, Position, everything()) # Moving the Chromosome and Position number to the front
 
+typeof(Maize_merge_2$Position) # this produced Character
+typeof(Teosinte_merge_2$Position) # this produced Character
+Maize_merge_2$Position <- as.numeric(Maize_merge_2$Position)
+Teosinte_merge_2$Position <- as.numeric(Teosinte_merge_2$Position)
+typeof(Maize_merge_2$Position) # this produced Double
+typeof(Teosinte_merge_2$Position) # this produced Double
+
+colnames(Maize_merge_2)[colnames(Maize_merge_2) == "SAMPLE_ID"] <- "SNP_ID"
+colnames(Teosinte_merge_2)[colnames(Teosinte_merge_2) == "SAMPLE_ID"] <- "SNP_ID"
+
 # To create a function to iterate over all the chromosomes I wanted to see if both maize and teosinte had the same number of unique chromosomes
 # If the vectors weren't the same length then the iteration in the next step wouldn't work
 # I created a vector with all the unique maize and teosinte chromosomes
@@ -158,9 +168,9 @@ invisible(lapply(1:10, Create_files))
 # I has to use the mutate(across(everything)), as.character() to tell R to treat the entire data table as a character because previosuly there was a mix of characters and integers and R doesn't like that
 # I also kept the the chromosome and position columns when flipping the data table 
 Maize_long <- Maize_merge_2 %>% mutate(across(everything(), as.character)) %>% 
-  pivot_longer(cols = -c(SAMPLE_ID, Chromosome, Position), names_to = "SNP_ID", values_to = "Genotype")
+  pivot_longer(cols = -c(SNP_ID, Chromosome, Position), names_to = "Sample_ID", values_to = "Genotype")
 Teosinte_long <- Teosinte_merge_2 %>% mutate(across(everything(), as.character)) %>% 
-  pivot_longer(cols = -c(SAMPLE_ID, Chromosome, Position), names_to = "SNP_ID", values_to = "Genotype")
+  pivot_longer(cols = -c(SNP_ID, Chromosome, Position), names_to = "Sample_ID", values_to = "Genotype")
 
 # SNP Distribution by Chromosome 
 # To compare the difference in the number of SNPs across chromosomes for Maize and Teosinte I created a double bar chart
@@ -202,7 +212,9 @@ Combined_long$Position <- as.numeric(as.character(Combined_long$Position))
 ggplot(Combined_long, aes(x = Position, fill = Species)) +
   geom_histogram(binwidth = 1000000, position = "identity", alpha = 0.5) +
   facet_wrap(~Chromosome, scales = "free_x") +
-  labs(title = "SNP Distribution per Chromosome", x = "Position (bp)", y = "Number of SNPs")
+  labs(title = "SNP Distribution per Chromosome", x = "Position (bp)", y = "Number of SNPs")+ 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8))
+
 ## Again we see that maize has more SNPs than Teosinte. Chromosome 7 is also interesting becuase there are no SNPs in the middle of the chromosome. 
 
 # Missing data and Amount of Heterozygosity
