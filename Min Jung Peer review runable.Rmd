@@ -1,0 +1,162 @@
+---
+title: "Untitled"
+output: html_document
+date: "2026-03-22"
+---
+
+```{r}
+
+# 1. Load libraries
+
+library(dplyr)
+library(tidyr)
+library(readr)
+
+#====================================
+###dplyr provides functions such as:
+
+  #filter() → choose rows based on conditions
+
+  #select() → choose columns
+
+  #arrange() → sort rows
+
+  #mutate() → create new variables
+
+  #summarize() → calculate summary statistics
+
+
+# 2. Load data
+
+genotypes <- read_tsv("https://raw.githubusercontent.com/EEOB-BioData/BCB5460_Spring2026/main/assignments/UNIX_Assignment/fang_et_al_genotypes.txt")
+
+snp_pos <- read_tsv("https://raw.githubusercontent.com/EEOB-BioData/BCB5460_Spring2026/main/assignments/UNIX_Assignment/snp_position.txt")
+
+
+# 3. Inspect data
+
+head(genotypes) #first row
+dim(genotypes) #dimenstion (column and row)
+colnames(genotypes) #column names
+
+head(snp_pos)
+dim(snp_pos)
+colnames(snp_pos)
+
+#============================
+### Both files have "SNP_ID".But Genoypes have SNP_ID as rows and SNP_Pos have them in one column. Nee to transpose one of them so I can join two files.
+
+
+# 4. Transpose genotype data
+
+geno_only <- genotypes[, -c(1:3)]
+
+geno_t <- t(geno_only)
+
+geno_df <- as.data.frame(geno_t)
+
+geno_df$SNP_ID <- rownames(geno_df)
+
+
+# 5. Prepare SNP position table
+snp_pos %>% select(SNP_ID, Chromosome, Position) %>% 
+  mutate(Chromosome = as.numeric(Chromosome), 
+         Position = as.numeric(Position))
+
+
+# 6. Join genotype and position data
+combined_data <- inner_join(snp_pos, geno_df, by="SNP_ID")
+
+
+# 7. Separate maize and teosinte groups
+maize_ids <- genotypes %>%
+  filter(Group %in% c("ZMMIL","ZMMLR","ZMMMR")) %>%
+  pull(Sample_ID)
+
+teosinte_ids <- genotypes %>%
+  filter(Group %in% c("ZMPBA","ZMPIL","ZMPJA")) %>%
+  pull(Sample_ID)
+
+
+maize_data <- combined_data %>%
+  select(SNP_ID, Chromosome, Position, all_of(maize_ids))
+
+teosinte_data <- combined_data %>%
+  select(SNP_ID, Chromosome, Position, all_of(teosinte_ids))
+
+
+
+# 8. Replace missing data
+maize_data[maize_data == "N"] <- "?"
+teosinte_data[teosinte_data == "N"] <- "?"
+
+# 9. Function to create chromosome files
+
+create_files <- function(data, prefix){
+  chromosomes <- 1:10
+  
+  lapply(chromosomes, function(chr){
+    
+    chr_data <- data %>% filter(Chromosome == chr)
+    
+    inc <- chr_data %>% arrange(Position)
+    write_tsv(inc, paste0(prefix, "_chr", chr, "_inc.txt"))
+    
+    dec <- chr_data %>% arrange(desc(Position))
+    dec[dec == "?"] <- "-"
+    
+    write_tsv(dec, paste0(prefix, "_chr", chr, "_dec.txt"))
+  })
+}
+
+create_files(maize_data, "maize")
+create_files(teosinte_data, "teosinte")
+
+#===========================================
+
+#Visualization
+#1
+library(tidyverse)
+library(ggplot2)
+
+
+#2 SNPs per chromosome 
+snp_counts <- combined %>%
+  group_by(Chromosome) %>%
+  summarise(SNP_count = n())
+
+ggplot(snp_counts, aes(x = factor(Chromosome), y = SNP_count)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(
+    title = "Number of SNPs per Chromosome",
+    x = "Chromosome",
+    y = "Number of SNPs"
+  ) +
+  theme_minimal()
+  
+#3
+
+
+
+
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
